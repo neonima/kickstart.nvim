@@ -94,7 +94,94 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- add any options here
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      "MunifTanjim/nui.nvim",
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      "rcarriga/nvim-notify",
+    }
+  },
+  {
+    "folke/zen-mode.nvim",
+    dependencies = {
+      {
+        "folke/twilight.nvim",
+        opts = {
+          dimming = {
+            alpha = 0.75, -- amount of dimming
+            -- we try to get the foreground from the highlight groups or fallback color
+            color = { "Normal", "#ffffff" },
+            term_bg = "#000000", -- if guibg=NONE, this will be used to calculate text color
+            inactive = false,    -- when true, other windows will be fully dimmed (unless they contain the same buffer)
+          },
+          context = 30,          -- amount of lines we will try to show around the current line
+          treesitter = true,     -- use treesitter when available for the filetype
+          -- treesitter is used to automatically expand the visible text,
+          -- but you can further control the types of nodes that should always be fully expanded
+          expand = { -- for treesitter, we we always try to expand to the top-most ancestor with these types
+            "function",
+            "method",
+            "table",
+            "if_statement",
+          },
+          exclude = {}, -- exclude these filetypes
+        },
 
+      },
+    },
+    opts = {
+      -- disable some global vim options (vim.o...)
+      -- comment the lines to not apply the options
+      options = {
+        enabled = true,
+        ruler = false,   -- disables the ruler text in the cmd line area
+        showcmd = false, -- disables the command in the last line of the screen
+        -- you may turn on/off statusline in zen mode by setting 'laststatus'
+        -- statusline will be shown only if 'laststatus' == 3
+        laststatus = 0,               -- turn off the statusline in zen mode
+      },
+      twilight = { enabled = true },  -- enable to start Twilight when zen mode opens
+      gitsigns = { enabled = false }, -- disables git signs
+      tmux = { enabled = false },     -- disables the tmux statusline
+      -- this will change the font size on kitty when in zen mode
+      -- to make this work, you need to set the following kitty options:
+      -- - allow_remote_control socket-only
+      -- - listen_on unix:/tmp/kitty
+      kitty = {
+        enabled = false,
+        font = "+4", -- font size increment
+      },
+      -- this will change the font size on alacritty when in zen mode
+      -- requires  Alacritty Version 0.10.0 or higher
+      -- uses `alacritty msg` subcommand to change font size
+      alacritty = {
+        enabled = false,
+        font = "14", -- font size
+      },
+      -- this will change the font size on wezterm when in zen mode
+      -- See alse also the Plugins/Wezterm section in this projects README
+      wezterm = {
+        enabled = false,
+        -- can be either an absolute font size or the number of incremental steps
+        font = "+4", -- (10% increase per step)
+      },
+    },
+    -- callback where you can add custom code when the Zen window opens
+    on_open = function(win)
+    end,
+    -- callback where you can add custom code when the Zen window closes
+    on_close = function()
+    end,
+  },
+  { "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -112,7 +199,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -158,7 +245,7 @@ require('lazy').setup({
       vim.cmd.colorscheme 'catppuccin-mocha'
     end,
   },
---[[   {
+  --[[   {
     -- Theme inspired by Atom
     'navarasu/onedark.nvim',
     priority = 1000,
@@ -177,7 +264,7 @@ require('lazy').setup({
         theme = 'catppuccin-mocha',
         component_separators = '|',
         section_separators = '',
-        
+
       },
     },
   },
@@ -224,7 +311,13 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
-  -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
+  -- {
+  --   'rmagatti/goto-preview',
+  --   config = function()
+  --     require('goto-preview').setup {}
+  --   end
+  -- },
+  -- -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
   require 'kickstart.plugins.autoformat',
@@ -352,7 +445,7 @@ local function live_grep_git_root()
   local git_root = find_git_root()
   if git_root then
     require('telescope.builtin').live_grep({
-      search_dirs = {git_root},
+      search_dirs = { git_root },
     })
   end
 end
@@ -361,7 +454,7 @@ vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').git_files, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader><space>', require('telescope.builtin').find_files, { desc = '[ ] Find files' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -371,13 +464,15 @@ vim.keymap.set('n', '<leader>/', function()
 end, { desc = '[/] Fuzzily search in current buffer' })
 
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+-- vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>z', require('zen-mode').toggle, { desc = 'Toggle [Z]en Mode' })
+vim.keymap.set('n', '<leader>rm', ':Glow<cr>', { desc = '[R]ender [M]arkdown' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -385,10 +480,11 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim',
+      'bash' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-    auto_install = false,
+    auto_install = true,
 
     highlight = { enable = true },
     indent = { enable = true },
@@ -557,6 +653,24 @@ mason_lspconfig.setup_handlers {
     }
   end,
 }
+
+require("noice").setup({
+  lsp = {
+    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+    override = {
+      ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+      ["vim.lsp.util.stylize_markdown"] = true,
+      ["cmp.entry.get_documentation"] = true,
+    },
+  },
+  -- you can enable a preset for easier configuration
+  presets = {
+    command_palette = true,       -- position the cmdline and popupmenu together
+    long_message_to_split = true, -- long messages will be sent to a split
+    inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+    lsp_doc_border = false,       -- add a border to hover docs and signature help
+  },
+})
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
