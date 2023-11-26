@@ -169,7 +169,7 @@ require('lazy').setup({
       -- this will change the font size on wezterm when in zen mode
       -- See alse also the Plugins/Wezterm section in this projects README
       wezterm = {
-        enabled = false,
+        enabled = true,
         -- can be either an absolute font size or the number of incremental steps
         font = "+4", -- (10% increase per step)
       },
@@ -244,6 +244,15 @@ require('lazy').setup({
     config = function()
       vim.cmd.colorscheme 'catppuccin-mocha'
     end,
+    opts = {
+      integrations = {
+        noice = true,
+        mason = true,
+        trouble = true,
+        notify = true,
+      },
+      transparent_background = true
+    }
   },
   --[[   {
     -- Theme inspired by Atom
@@ -308,10 +317,89 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
+      'nvim-treesitter/nvim-treesitter-context',
     },
     build = ':TSUpdate',
   },
+  {
+    'rmagatti/auto-session',
+    opts = {
+      log_level = 'info',
+      auto_session_root_dir = vim.fn.stdpath('data') .. "/sessions/",
+      auto_session_enabled = true,
+      auto_save_enabled = true,
+      auto_session_use_git_branch = true,
+      auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+    },
+  },
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    build = ":Copilot auth",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        panel = {
+          enabled = true,
+          auto_refresh = true,
+        },
+        suggestion = {
+          enabled = true,
+          auto_trigger = true,
+          accept = false, -- disable built-in keymapping
+        },
+      })
 
+      -- hide copilot suggestions when cmp menu is open
+      -- to prevent odd behavior/garbled up suggestions
+      local cmp_status_ok, cmp = pcall(require, "cmp")
+      if cmp_status_ok then
+        cmp.event:on("menu_opened", function()
+          vim.b.copilot_suggestion_hidden = true
+        end)
+
+        cmp.event:on("menu_closed", function()
+          vim.b.copilot_suggestion_hidden = false
+        end)
+      end
+    end,
+  },
+  --
+  -- -- copilot status in lualine
+  -- -- this is taken from the copilot lazyvim extras at:
+  -- -- https://www.lazyvim.org/plugins/extras/coding.copilot
+  -- {
+  --   "nvim-lualine/lualine.nvim",
+  --   optional = true,
+  --   event = "VeryLazy",
+  --   opts = function(_, opts)
+  --     local Util = require("lazyvim.util")
+  --     local colors = {
+  --       [""] = Util.ui.fg("Special"),
+  --       ["Normal"] = Util.ui.fg("Special"),
+  --       ["Warning"] = Util.ui.fg("DiagnosticError"),
+  --       ["InProgress"] = Util.ui.fg("DiagnosticWarn"),
+  --     }
+  --     table.insert(opts.sections.lualine_x, 2, {
+  --       function()
+  --         local icon = require("lazyvim.config").icons.kinds.Copilot
+  --         local status = require("copilot.api").status.data
+  --         return icon .. (status.message or "")
+  --       end,
+  --       cond = function()
+  --         local ok, clients = pcall(vim.lsp.get_active_clients, { name = "copilot", bufnr = 0 })
+  --         return ok and #clients > 0
+  --       end,
+  --       color = function()
+  --         if not package.loaded["copilot"] then
+  --           return
+  --         end
+  --         local status = require("copilot.api").status.data
+  --         return colors[status.status] or colors[""]
+  --       end,
+  --     })
+  --   end,
+  -- },
   -- {
   --   'rmagatti/goto-preview',
   --   config = function()
@@ -332,6 +420,7 @@ require('lazy').setup({
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
 }, {})
+
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -373,6 +462,9 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+
+vim.wo.relativenumber = true
+vim.wo.number = true
 
 -- [[ Basic Keymaps ]]
 
