@@ -206,11 +206,11 @@ require('lazy').setup({
     opts = {
       -- See `:help gitsigns.txt`
       signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
+        add = { text = '' },
+        change = { text = '󰜥' },
+        delete = { text = '󰚃' },
+        topdelete = { text = '󰗨' },
+        changedelete = { text = '⌦󰗨' },
       },
       on_attach = function(bufnr)
         vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk, { buffer = bufnr, desc = 'Preview git hunk' })
@@ -238,31 +238,51 @@ require('lazy').setup({
       end,
     },
   },
+  -- {
+  --   'catppuccin/nvim',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'catppuccin-mocha'
+  --   end,
+  --   opts = {
+  --     integrations = {
+  --       noice = true,
+  --       mason = true,
+  --       trouble = true,
+  --       notify = true,
+  --     },
+  --     transparent_background = true
+  --   }
+  -- },
+  -- {
+  --   -- Theme inspired by Atom
+  --   'navarasu/onedark.nvim',
+  --   priority = 1000,
+  --   opts = {
+  --     -- style = "darker",
+  --     -- highlights = {
+  --     -- ["@keyword"] = { fg = '$green' },
+  --     -- ["@string"] = { fg = '$bright_orange', bg = '#00ff00', fmt = 'bold' },
+  --     -- ["@function"] = { fg = '#0000ff', sp = '$cyan', fmt = 'underline,italic' },
+  --     -- ["@function.builtin"] = { fg = '#0059ff' }
+  --     -- },
+  --     tranparent = true,
+  --     lualine = {
+  --       transparent = true, -- lualine center bar transparency
+  --     },
+  --   },
+  --   -- lazy = true
+  --
+  -- },
   {
-    'catppuccin/nvim',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'catppuccin-mocha'
-    end,
-    opts = {
-      integrations = {
-        noice = true,
-        mason = true,
-        trouble = true,
-        notify = true,
-      },
-      transparent_background = true
-    }
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-neotest/neotest-go"
+    },
   },
-  --[[   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
- ]]
+
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -270,7 +290,8 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = true,
-        theme = 'catppuccin-mocha',
+        -- theme = 'catppuccin-mocha',
+        theme = 'onedark',
         component_separators = '|',
         section_separators = '',
 
@@ -325,9 +346,11 @@ require('lazy').setup({
     'rmagatti/auto-session',
     opts = {
       log_level = 'info',
+      auto_session_enable_last_session = true,
       auto_session_root_dir = vim.fn.stdpath('data') .. "/sessions/",
       auto_session_enabled = true,
       auto_save_enabled = true,
+      auto_restore_enabled = true,
       auto_session_use_git_branch = true,
       auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
     },
@@ -363,6 +386,143 @@ require('lazy').setup({
         end)
       end
     end,
+  },
+  {
+    "kylechui/nvim-surround",
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup({
+        -- Configuration here, or leave empty to use defaults
+      })
+    end
+  },
+  {
+    'Wansmer/treesj',
+    keys = { '<leader>m', '<leader>j', '<leader>s' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('treesj').setup({ --[[ your config ]] })
+    end,
+  },
+  {
+    'f-person/git-blame.nvim',
+    event = "VeryLazy",
+  },
+  {
+    "ggandor/leap.nvim",
+    enabled = true,
+    keys = {
+      { "s",  mode = { "n", "x", "o" }, desc = "Leap forward to" },
+      { "S",  mode = { "n", "x", "o" }, desc = "Leap backward to" },
+      { "gs", mode = { "n", "x", "o" }, desc = "Leap from windows" },
+    },
+    config = function(_, opts)
+      local leap = require("leap")
+      for k, v in pairs(opts) do
+        leap.opts[k] = v
+      end
+      leap.add_default_mappings(true)
+      -- vim.keymap.del({ "x", "o" }, "x")
+      -- vim.keymap.del({ "x", "o" }, "X")
+    end,
+  },
+  {
+    'AlexvZyl/nordic.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require 'nordic'.load()
+    end,
+    opts = {
+      -- This callback can be used to override the colors used in the palette.
+      -- on_palette = function(palette) return palette end,
+      -- Enable bold keywords.
+      bold_keywords = true,
+      -- Enable italic comments.
+      italic_comments = true,
+      -- Enable general editor background transparency.
+      -- transparent_bg = true,
+      -- Enable brighter float border.
+      bright_border = false,
+      -- Reduce the overall amount of blue in the theme (diverges from base Nord).
+      -- reduced_blue = true,
+      -- Swap the dark background with the normal one.
+      swap_backgrounds = false,
+      -- Override the styling of any highlight group.
+      -- override = {},
+      -- Cursorline options.  Also includes visual/selection.
+      cursorline = {
+        -- Bold font in cursorline.
+        bold = false,
+        -- Bold cursorline number.
+        bold_number = true,
+        -- Avialable styles: 'dark', 'light'.
+        theme = 'dark',
+        -- Blending the cursorline bg with the buffer bg.
+        blend = 0.3,
+      },
+      noice = {
+        -- Available styles: `classic`, `flat`.
+        style = 'flat',
+      },
+      telescope = {
+        -- Available styles: `classic`, `flat`.
+        style = 'flat',
+      },
+      leap = {
+        -- Dims the backdrop when using leap.
+        dim_backdrop = true,
+      },
+      ts_context = {
+        -- Enables dark background for treesitter-context window
+        -- dark_background = true,
+      }
+    }
+  },
+  {
+    'stevearc/oil.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+  },
+  {
+    'rebelot/kanagawa.nvim',
+    opts = {
+      compile = true,   -- enable compiling the colorscheme
+      undercurl = true, -- enable undercurls
+      commentStyle = { italic = true },
+      functionStyle = {},
+      keywordStyle = { italic = true },
+      statementStyle = { bold = true },
+      typeStyle = {},
+      transparent = true,    -- do not set background color
+      dimInactive = false,   -- dim inactive window `:h hl-NormalNC`
+      terminalColors = true, -- define vim.g.terminal_color_{0,17}
+      theme = "wave",        -- Load "wave" theme when 'background' option is not set
+      -- background = {         -- map the value of 'background' option to a theme
+      --   dark = "dragon",     -- try "dragon" !
+      --   light = "lotus"
+      -- },
+      overrides = function(colors)
+        local theme = colors.theme
+        return {
+          NormalFloat = { bg = "none" },
+          FloatBorder = { bg = "none" },
+          FloatTitle = { bg = "none" },
+
+          -- Save an hlgroup with dark background and dimmed foreground
+          -- so that you can use it where your still want darker windows.
+          -- E.g.: autocmd TermOpen * setlocal winhighlight=Normal:NormalDark
+          NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
+
+          -- Popular plugins that open floats will link to NormalFloat by default;
+          -- set their background accordingly if you wish to keep them dark and borderless
+          LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+          MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+        }
+      end,
+    },
   },
   --
   -- -- copilot status in lualine
@@ -419,8 +579,75 @@ require('lazy').setup({
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+      transparent = true,
+    },
+  },
 }, {})
 
+
+-- stylua: ignore
+local colors = {
+  blue   = '#80a0ff',
+  cyan   = '#79dac8',
+  black  = '#080808',
+  white  = '#c6c6c6',
+  red    = '#ff5189',
+  violet = '#d183e8',
+  grey   = '#303030',
+}
+
+local bubbles_theme = {
+  normal = {
+    a = { fg = colors.black, bg = colors.violet },
+    b = { fg = colors.white, bg = colors.grey },
+    c = { fg = colors.black, bg = colors.black },
+  },
+
+  insert = { a = { fg = colors.black, bg = colors.blue } },
+  visual = { a = { fg = colors.black, bg = colors.cyan } },
+  replace = { a = { fg = colors.black, bg = colors.red } },
+
+  inactive = {
+    a = { fg = colors.white, bg = colors.black },
+    b = { fg = colors.white, bg = colors.black },
+    c = { fg = colors.black, bg = colors.black },
+  },
+}
+
+require('lualine').setup {
+  options = {
+    theme = bubbles_theme,
+    component_separators = '|',
+    section_separators = { left = '', right = '' },
+  },
+  sections = {
+    lualine_a = {
+      { 'mode', separator = { left = '' }, right_padding = 2 },
+    },
+    lualine_b = { 'filename', 'branch' },
+    lualine_c = { 'fileformat' },
+    lualine_x = {},
+    lualine_y = { 'filetype', 'progress' },
+    lualine_z = {
+      { 'location', separator = { right = '' }, left_padding = 2 },
+    },
+  },
+  inactive_sections = {
+    lualine_a = { 'filename' },
+    lualine_b = {},
+    lualine_c = {},
+    lualine_x = {},
+    lualine_y = {},
+    lualine_z = { 'location' },
+  },
+  tabline = {},
+  extensions = {},
+}
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -466,22 +693,26 @@ vim.o.termguicolors = true
 vim.wo.relativenumber = true
 vim.wo.number = true
 
--- [[ Basic Keymaps ]]
+vim.cmd.colorscheme("nordic")
 
+-- [[ Basic Keymaps ]]
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "gg", "ggzz")
 vim.keymap.set("n", "G", "Gzz")
 vim.keymap.set("n", "{", "{zz")
 vim.keymap.set("n", "}", "}zz")
+-- vim.keymap.set("n", "h", "hzz")
+-- vim.keymap.set("n", "j", "jzz")
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gkzz' : 'kz'", { expr = true, silent = true })
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gjzz' : 'jzz'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
