@@ -109,7 +109,6 @@ require('lazy').setup({
       "rcarriga/nvim-notify",
     }
   },
-  { "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -191,7 +190,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',  opts = {} },
+  { 'numToStr/Comment.nvim', opts = {} },
 
 
   -- Fuzzy Finder (files, lsp, etc)

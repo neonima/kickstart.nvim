@@ -6,7 +6,10 @@ return {
   {
     'stevearc/oil.nvim',
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    lazy = true,
+    config = function()
+      require("oil").setup({})
+      vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+    end
   },
   {
     "nvim-neotest/neotest",
@@ -29,4 +32,6 @@ return {
     end,
   },
   { 'akinsho/toggleterm.nvim', version = "*", config = true },
+
+  { "ellisonleao/glow.nvim",   config = true, cmd = "Glow" },
 }

@@ -1,9 +1,6 @@
-vim.keymap.set("n", "<leader>gg", "<cmd>lua _lazygit_toggle()<CR>",
-  { desc = 'Open Lazy[g]it]', noremap = true, silent = true })
 -- [[ Basic Keymaps ]]
 
-require("oil").setup({})
-vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "gg", "ggzz")
