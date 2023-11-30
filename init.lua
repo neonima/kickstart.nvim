@@ -241,7 +241,6 @@ require('lazy').setup({
 require('custom.conf.keymaps')
 require('custom.conf.lazygit')
 require('custom.conf.lualine-theme')
-require('custom.conf.test')
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
