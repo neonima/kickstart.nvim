@@ -4,6 +4,7 @@ return {
   build = ":Copilot auth",
   event = "InsertEnter",
   lazy = true,
+  enabled = false,
   config = function()
     require("copilot").setup({
       panel = {

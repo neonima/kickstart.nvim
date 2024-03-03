@@ -28,8 +28,26 @@ return {
         flavour = "mocha",
         transparent_background = true,
       })
-      vim.cmd.colorscheme("catppuccin-mocha")
+      -- vim.cmd.colorscheme("catppuccin-mocha")
     end,
+  },
+  {
+    {
+      'sainnhe/edge',
+      -- opts = function ()
+      --   require('edge').style =
+      -- end
+      config = function()
+        -- require('edge').setup({
+        --   transparent_background = 1,
+        --   better_performance = 1,
+        -- })
+        vim.cmd "let g:edge_transparent_background = 1"
+        vim.cmd "let g:edge_better_performance = 1"
+        vim.cmd.colorscheme("edge")
+      end
+
+    },
   },
   { 'akinsho/toggleterm.nvim', version = "*", config = true },
   { "ellisonleao/glow.nvim",   config = true, cmd = "Glow" },
@@ -58,6 +76,16 @@ return {
     enabled = false,
     config = function()
       require("copilot_cmp").setup()
+    end
+  },
+  {
+    'ThePrimeagen/git-worktree.nvim',
+    config = function()
+      require('telescope').load_extension("git_worktree")
+
+      vim.keymap.set('n', '<leader>gt', function()
+        require('telescope').extensions.git_worktree.git_worktrees()
+      end, { desc = '[g]it [w]orktree, switch between them' })
     end
   }
 }
